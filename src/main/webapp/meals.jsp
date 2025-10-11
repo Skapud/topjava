@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="ru.javawebinar.topjava.util.DateUtil" %>
 
 <html lang="ru">
 <head>
@@ -17,7 +18,7 @@
     </tr>
     <c:forEach items="${meals}" var="meal">
         <tr style="color: ${meal.excess ? 'red' : 'green'}">
-            <td>${meal.dateTimeWithoutT}</td>
+            <td>${meal.dateTime.format(DateUtil.DATE_TIME_FORMATTER)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td>Edit</td>
