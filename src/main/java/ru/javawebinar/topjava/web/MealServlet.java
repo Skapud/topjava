@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.storage.CollectionMealStorage;
+import ru.javawebinar.topjava.storage.MealStorage;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletConfig;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -23,12 +26,40 @@ public class MealServlet extends HttpServlet {
 
     public static final int CALORIES_PER_DAY = 2000;
 
-    private CollectionMealStorage mealStorage;
+    private MealStorage mealStorage;
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         mealStorage = new CollectionMealStorage();
-        mealStorage.populate();
+        populate();
+    }
+
+    private void populate() {
+        List<Meal> mealsToPopulate = Arrays.asList(
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0),
+                        "Завтрак", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 14, 30),
+                        "Обед", 770),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 25),
+                        "Ужин", 500),
+                new Meal(LocalDateTime.of(2022, Month.DECEMBER, 5, 9, 30),
+                        "Завтрак", 1050),
+                new Meal(LocalDateTime.of(2022, Month.DECEMBER, 5, 14, 30),
+                        "Обед", 450),
+                new Meal(LocalDateTime.of(2022, Month.DECEMBER, 5, 19, 10),
+                        "Ужин", 520),
+                new Meal(LocalDateTime.of(2023, Month.AUGUST, 20, 2, 5),
+                        "Срыв", 800),
+                new Meal(LocalDateTime.of(2023, Month.AUGUST, 20, 8, 25),
+                        "Завтрак", 375),
+                new Meal(LocalDateTime.of(2023, Month.AUGUST, 20, 18, 15),
+                        "Полдник", 650),
+                new Meal(LocalDateTime.of(2023, Month.AUGUST, 20, 23, 8),
+                        "Ужин", 750));
+
+        for (Meal meal: mealsToPopulate) {
+            mealStorage.create(meal);
+        }
     }
 
     @Override
@@ -38,7 +69,7 @@ public class MealServlet extends HttpServlet {
         if (action == null) {
             log.debug("get all meals");
             List<MealTo> meals = MealsUtil.filteredByStreams(
-                    mealStorage.getAll().values(),
+                    mealStorage.getAll(),
                     LocalTime.MIN,
                     LocalTime.MAX,
                     CALORIES_PER_DAY);

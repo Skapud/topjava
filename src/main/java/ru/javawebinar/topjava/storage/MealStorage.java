@@ -14,5 +14,5 @@ public interface MealStorage {
 
     void delete(int id);
 
-    ConcurrentHashMap<Integer, Meal> getAll();
+    List<Meal> getAll();
 }

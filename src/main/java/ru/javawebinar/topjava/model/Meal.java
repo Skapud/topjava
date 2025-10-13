@@ -61,4 +61,13 @@ public class Meal {
     public LocalTime getTime() {
         return dateTime.toLocalTime();
     }
+
+    @Override
+    public String toString() {
+        return "Meal{" +
+                "id=" + id +
+                ", dateTime=" + dateTime +
+                ", calories=" + calories +
+                '}';
+    }
 }
