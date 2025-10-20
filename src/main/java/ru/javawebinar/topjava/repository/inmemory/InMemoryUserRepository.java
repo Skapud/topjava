@@ -42,7 +42,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User get(int id) {
         log.info("get {}", id);
-        return usersMap.getOrDefault(id, null);
+        return usersMap.get(id);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class InMemoryUserRepository implements UserRepository {
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
         User user = usersMap.values().stream()
-                .filter(u -> u.getEmail().equals(email))
+                .filter(u -> u.getEmail().equalsIgnoreCase(email))
                 .findFirst()
                 .orElse(null);
         return user;

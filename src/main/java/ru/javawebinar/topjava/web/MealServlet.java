@@ -31,11 +31,11 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
+        Meal meal = new Meal((id.isEmpty() ? null : Integer.valueOf(id)),
+                LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
-                id.isEmpty() ? null : Integer.valueOf(id),
-                Integer.parseInt(request.getParameter("calories")));
-
+                Integer.parseInt(request.getParameter("calories")),
+                SecurityUtil.authUserId());
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         repository.save(meal, SecurityUtil.authUserId());
         response.sendRedirect("meals");
@@ -57,8 +57,7 @@ public class MealServlet extends HttpServlet {
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                                 "",
-                                1000,
-                                SecurityUtil.authUserId()) :
+                                1000) :
                         repository.get(getId(request), SecurityUtil.authUserId());
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);

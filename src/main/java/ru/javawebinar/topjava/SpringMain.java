@@ -9,7 +9,6 @@ import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
 
@@ -21,13 +20,11 @@ public class SpringMain {
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
-            mealRestController.save(new Meal(
+            mealRestController.create(new Meal(
                     LocalDateTime.of(2020, Month.JANUARY, 30, 12, 0),
                     "Завтрак второй",
-                    250,
-                    1));
-            mealRestController.getFiltered(LocalTime.MIN, LocalTime.MAX);
-            mealRestController.getAll();
+                    250));
+            System.out.println(mealRestController.getAll());
         }
     }
 }

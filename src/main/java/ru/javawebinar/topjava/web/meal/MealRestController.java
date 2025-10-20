@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final MealService service;
 
@@ -37,11 +38,13 @@ public class MealRestController {
         return service.get(id, SecurityUtil.authUserId());
     }
 
-    public List<MealTo> getFiltered(LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getFiltered");
         return MealsUtil.getFilteredTos(
                 service.getAll(SecurityUtil.authUserId()),
                 SecurityUtil.authUserCaloriesPerDay(),
+                startDate,
+                endDate,
                 startTime,
                 endTime);
     }
@@ -51,8 +54,8 @@ public class MealRestController {
         service.delete(id, SecurityUtil.authUserId());
     }
 
-    public void save(Meal meal) {
-        log.info("save {}", meal);
+    public void create(Meal meal) {
+        log.info("create {}", meal);
         checkIsNew(meal);
         service.create(meal, SecurityUtil.authUserId());
     }
