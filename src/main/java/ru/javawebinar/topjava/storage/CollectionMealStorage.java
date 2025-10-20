@@ -20,12 +20,7 @@ public class CollectionMealStorage implements MealStorage {
     @Override
     public Meal update(Meal meal) {
         log.info("Update " + meal);
-        int replacedId = meal.getId();
-        Meal replacedMeal = meals.replace(replacedId, meal);
-        if (!replacedMeal.equals(meals.get(replacedId))) {
-            return meal;
-        }
-        return null;
+        return meals.computeIfPresent(meal.getId(), (key, oldMeal) -> meal);
     }
 
     @Override
