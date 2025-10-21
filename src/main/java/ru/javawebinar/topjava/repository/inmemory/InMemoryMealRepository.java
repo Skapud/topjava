@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -23,26 +24,22 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
+        meal.setUserId(userId);
         if (meal.isNew()) {
-            meal.setUserId(userId);
             meal.setId(counter.incrementAndGet());
             mealsMap.put(meal.getId(), meal);
             return meal;
         }
-        return mealsMap.computeIfPresent(meal.getId(), (id, oldMeal) -> {
-            if (meal.getUserId() == userId) {
-                return meal;
-            }
-            return oldMeal;
-        });
+        return mealsMap.computeIfPresent(meal.getId(), (id, oldMeal) ->
+                (oldMeal.getUserId() == userId) ? meal : oldMeal);
     }
 
     @Override
     public boolean delete(int mealId, int userId) {
-       return null == mealsMap.computeIfPresent(mealId, (key, m) -> {
-                   if (m.getUserId() == userId) return null;
-                   return m;
-               });
+        return mealsMap.computeIfPresent(mealId, (key, m) -> {
+            if (m.getUserId() == userId) return null;
+            return m;
+        }) == null;
     }
 
     @Override
@@ -58,6 +55,16 @@ public class InMemoryMealRepository implements MealRepository {
     public List<Meal> getAll(int userId) {
         List<Meal> meals = mealsMap.values().parallelStream()
                 .filter(m -> m.getUserId() == userId)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
+        return meals;
+    }
+
+    @Override
+    public List<Meal> getFiltered(int userId, Predicate<Meal> filter) {
+        List<Meal> meals = mealsMap.values().parallelStream()
+                .filter(m -> m.getUserId() == userId)
+                .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
         return meals;

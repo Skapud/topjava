@@ -7,12 +7,14 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
@@ -38,15 +40,12 @@ public class MealRestController {
         return service.get(id, SecurityUtil.authUserId());
     }
 
-    public List<MealTo> getFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getFiltered(int id, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getFiltered");
-        return MealsUtil.getFilteredTos(
-                service.getAll(SecurityUtil.authUserId()),
-                SecurityUtil.authUserCaloriesPerDay(),
-                startDate,
-                endDate,
-                startTime,
-                endTime);
+        Predicate<Meal> filter = meal ->
+                DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate) &&
+                        DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime);
+        return MealsUtil.getTos(service.getFiltered(SecurityUtil.authUserId(), filter), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public void delete(int id) {

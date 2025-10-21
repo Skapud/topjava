@@ -8,7 +8,9 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
 
@@ -22,9 +24,15 @@ public class SpringMain {
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             mealRestController.create(new Meal(
                     LocalDateTime.of(2020, Month.JANUARY, 30, 12, 0),
-                    "Завтрак второй",
-                    250));
-            System.out.println(mealRestController.getAll());
+                    "ТЕСТ",
+                    3500));
+            System.out.println(mealRestController.getFiltered(
+                    1,
+                    LocalDate.of(2020, Month.JANUARY, 30),
+                    LocalDate.of(2020,Month.JANUARY, 31),
+                    LocalTime.of(10,0,0),
+                    LocalTime.of(20,0,0)
+            ));
         }
     }
 }

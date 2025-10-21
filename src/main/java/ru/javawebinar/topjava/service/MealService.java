@@ -5,6 +5,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
@@ -35,5 +36,9 @@ public class MealService {
 
     public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
+    }
+
+    public List<Meal> getFiltered(int userId, Predicate<Meal> filter) {
+        return repository.getFiltered(userId, filter);
     }
 }
