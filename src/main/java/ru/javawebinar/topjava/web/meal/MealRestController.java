@@ -61,6 +61,6 @@ public class MealRestController {
     public void update(Meal meal, int id) {
         log.info("update {}", meal);
         assureIdConsistent(meal, id);
-        service.update(meal, id);
+        service.update(meal, SecurityUtil.authUserId());
     }
 }
