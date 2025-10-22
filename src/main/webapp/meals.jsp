@@ -37,10 +37,10 @@
             </tr>
             </thead>
             <tr>
-                <td><input type="date" name="dateFrom" required></td>
-                <td><input type="date" name="dateTo" required></td>
-                <td style="text-align: right;"><input type="time" name="timeFrom" required></td>
-                <td style="text-align: right;"><input type="time" name="timeTo" required></td>
+                <td><input type="date" name="dateFrom"></td>
+                <td><input type="date" name="dateTo"></td>
+                <td style="text-align: right;"><input type="time" name="timeFrom"></td>
+                <td style="text-align: right;"><input type="time" name="timeTo"></td>
             </tr>
             <tr>
                 <td></td>

@@ -8,7 +8,6 @@ public class SecurityUtil {
 
     public static void setAuthUserId(int id) {
         SecurityUtil.id = id;
-        System.out.println(id);
     }
 
     public static int authUserId() {

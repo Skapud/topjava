@@ -6,8 +6,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
-import ru.javawebinar.topjava.web.user.AdminRestController;
-import ru.javawebinar.topjava.web.user.ProfileRestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,15 +22,11 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
     private ConfigurableApplicationContext appCtx;
-    private AdminRestController adminUserController;
-    private ProfileRestController profileRestController;
     private MealRestController mealRestController;
 
     @Override
     public void init() {
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-        adminUserController = appCtx.getBean(AdminRestController.class);
-        profileRestController = appCtx.getBean(ProfileRestController.class);
         mealRestController = appCtx.getBean(MealRestController.class);
     }
 
@@ -84,10 +78,10 @@ public class MealServlet extends HttpServlet {
             case "filter":
                 log.info("getFiltered");
                 request.setAttribute("meals", mealRestController.getFiltered(
-                        LocalDate.parse(dateFrom),
-                        LocalDate.parse(dateTo),
-                        LocalTime.parse(timeFrom),
-                        LocalTime.parse(timeTo)
+                        dateFrom.isEmpty() ? LocalDate.MIN : LocalDate.parse(dateFrom),
+                        dateTo.isEmpty() ? LocalDate.now() : LocalDate.parse(dateTo),
+                        timeFrom.isEmpty() ? LocalTime.MIN : LocalTime.parse(timeFrom),
+                        timeTo.isEmpty() ? LocalTime.MAX : LocalTime.parse(timeTo)
                 ));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
