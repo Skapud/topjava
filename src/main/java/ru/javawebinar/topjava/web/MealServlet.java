@@ -79,7 +79,7 @@ public class MealServlet extends HttpServlet {
                 log.info("getFiltered");
                 request.setAttribute("meals", mealRestController.getFiltered(
                         dateFrom.isEmpty() ? LocalDate.MIN : LocalDate.parse(dateFrom),
-                        dateTo.isEmpty() ? LocalDate.now() : LocalDate.parse(dateTo),
+                        dateTo.isEmpty() ? LocalDate.MAX : LocalDate.parse(dateTo),
                         timeFrom.isEmpty() ? LocalTime.MIN : LocalTime.parse(timeFrom),
                         timeTo.isEmpty() ? LocalTime.MAX : LocalTime.parse(timeTo)
                 ));
