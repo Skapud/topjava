@@ -15,7 +15,7 @@ public class MatcherFactory {
     }
 
     public static class Matcher<T> {
-        private final String[] fieldsToIgnore;
+        private String[] fieldsToIgnore = {"user"};
 
         private Matcher(String... fieldsToIgnore) {
             this.fieldsToIgnore = fieldsToIgnore;
