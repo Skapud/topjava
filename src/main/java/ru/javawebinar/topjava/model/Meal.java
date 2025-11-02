@@ -5,17 +5,17 @@ import org.hibernate.validator.constraints.Range;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id =:user_id"),
-        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m LEFT JOIN FETCH m.user " +
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m " +
                 "WHERE m.user.id =:user_id " +
                 "ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m LEFT JOIN FETCH m.user " +
+        @NamedQuery(name = Meal.BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m " +
                 "WHERE m.user.id =:user_id " +
                 "AND m.dateTime >= :start " +
                 "AND m.dateTime < :end " +
@@ -23,29 +23,29 @@ import java.time.LocalTime;
 })
 @Entity
 @Table(name = "meal",
-uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "uk_userid_datetime")})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "uk_userid_datetime")})
 public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
     public static final String ALL_SORTED = "Meal.getAllSorted";
     public static final String BETWEEN_HALF_OPEN = "Meal.getBetweenHalfOpen";
 
-
-    @Column(name = "date_time")
+    @Column(name = "date_time", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
 
     @Column(name = "calories")
-    @NotNull
     @Range(min = 10, max = 10000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {
