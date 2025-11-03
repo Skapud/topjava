@@ -4,8 +4,10 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
-import org.junit.rules.TestName;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -15,11 +17,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.junit.Assert.assertThrows;
+import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -31,27 +37,17 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-    private static final Map<String, Duration> testsInfo = new HashMap<>();
-    private final Clock clock = Clock.systemDefaultZone();
-    private Instant start;
+    private static final Map<String, Long> testsInfo = new HashMap<>();
+    private static final Logger log = getLogger(MealServiceTest.class);
 
     @Rule
-    public TestName testName = new TestName();
-
-    @Rule
-    public final ExternalResource singleTestResource = new ExternalResource() {
+    public Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void before() {
-            start = clock.instant();
-        }
-
-        @Override
-        protected void after() {
-            Instant end = clock.instant();
-            String name = testName.getMethodName();
-            Duration duration = Duration.between(start, end);
-            testsInfo.put(name, duration);
-            System.out.println(name + " - " + duration);
+        protected void finished(long nanos, Description description) {
+            String methodName = description.getMethodName();
+            long durationMillis = NANOSECONDS.toMillis(nanos);
+            log.info("{} - {} ms", methodName, durationMillis);
+            testsInfo.put(methodName, durationMillis);
         }
     };
 
@@ -59,10 +55,9 @@ public class MealServiceTest {
     public static final ExternalResource classResource = new ExternalResource() {
         @Override
         protected void after() {
-            System.out.println("Tests summary:");
-            for (Map.Entry<String, Duration> entry : testsInfo.entrySet()) {
-                System.out.println(entry.getKey() + " - " + entry.getValue());
-            }
+            log.info(testsInfo.entrySet().stream().parallel()
+                    .map(e -> e.getKey() + " - " + e.getValue() + " ms")
+                    .collect(Collectors.joining(" \n")));
         }
     };
 
