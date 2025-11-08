@@ -18,4 +18,7 @@ public interface UserRepository {
     User getByEmail(String email);
 
     List<User> getAll();
+
+    // task 7
+    User getWithMeals(int userId);
 }

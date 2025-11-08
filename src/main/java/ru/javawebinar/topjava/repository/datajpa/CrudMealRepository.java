@@ -12,14 +12,19 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
-
-    Meal findMealByIdAndUserId(int id, int userId);
-
     @Transactional
     @Modifying
-    int deleteMealByIdAndUserId(int id, int userId);
+    @Query("DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:user_id")
+    int delete(@Param("id") int id, @Param("user_id") int userId);
 
-    List<Meal> getMealsByUserIdOrderByDateTimeDesc(int userId);
+    @Query("SELECT m FROM Meal m WHERE m.id=:id AND m.user.id =:user_id")
+    Meal get(@Param("id") int id, @Param("user_id") int userId);
+
+    @Query("SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.id=:id AND m.user.id =:user_id")
+    Meal getWithUser(@Param("id") int id, @Param("user_id") int userId);
+
+    @Query("SELECT m FROM Meal m WHERE m.user.id =:user_id ORDER BY m.dateTime DESC")
+    List<Meal> getAll(@Param("user_id") int userId);
 
     @Query("SELECT m FROM Meal m WHERE m.user.id =:user_id " +
             "AND m.dateTime >= :startDateTime " +
@@ -27,5 +32,6 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
             "ORDER BY m.dateTime DESC")
     List<Meal> getBetweenHalfOpen(@Param("startDateTime") LocalDateTime startDateTime,
                                   @Param("endDateTime") LocalDateTime endDateTime, @Param("user_id") int userId);
+
 
 }
