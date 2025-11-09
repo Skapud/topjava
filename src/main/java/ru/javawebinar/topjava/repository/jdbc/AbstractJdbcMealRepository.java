@@ -82,10 +82,5 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
                 ROW_MAPPER, userId, convertForDb(startDateTime), convertForDb(endDateTime));
     }
 
-    @Override
-    public Meal getWithUser(int id, int userId) {
-        return null;
-    }
-
-    abstract protected Object convertForDb(LocalDateTime dateTime);
+    protected abstract <T> T convertForDb(LocalDateTime dateTime);
 }

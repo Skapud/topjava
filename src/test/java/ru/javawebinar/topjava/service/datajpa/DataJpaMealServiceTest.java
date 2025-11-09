@@ -3,16 +3,19 @@ package ru.javawebinar.topjava.service.datajpa;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javawebinar.topjava.MatcherFactory;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractMealServiceTest;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 
 @ActiveProfiles(profiles = DATAJPA)
@@ -21,24 +24,24 @@ public class DataJpaMealServiceTest extends AbstractMealServiceTest {
     @Transactional
     @Test
     public void getWithUser() {
-        MatcherFactory.Matcher<Meal> mealMatcher = MatcherFactory.usingIgnoringFieldsComparator("user.registered");
-
-        Meal actualMeal = service.getWithUser(ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
+        Meal meal = service.getWithUser(ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
 
         User expectedUser = new User(UserTestData.admin);
+        expectedUser.setMeals(List.of(adminMeal2, adminMeal1));
 
-        Meal expectedMeal1 = new Meal(adminMeal1.getId(), adminMeal1.getDateTime(),
-                adminMeal1.getDescription(), adminMeal1.getCalories());
-        expectedMeal1.setUser(expectedUser);
-        Meal expectedMeal2 = new Meal(adminMeal2.getId(), adminMeal2.getDateTime(),
-                adminMeal2.getDescription(), adminMeal2.getCalories());
-        expectedMeal2.setUser(expectedUser);
-
-        expectedUser.setMeals(List.of(expectedMeal2, expectedMeal1));
-
-        Meal expectedMeal = expectedMeal1;
+        Meal expectedMeal = adminMeal1;
         expectedMeal.setUser(expectedUser);
 
-        mealMatcher.assertMatch(actualMeal, expectedMeal);
+        MEAL_MATCHER_WITH_USER.assertMatch(meal, expectedMeal);
+    }
+
+    @Test
+    public void getWithUserNotFound() {
+        assertThrows(NotFoundException.class, () -> service.getWithUser(NOT_FOUND, USER_ID));
+    }
+
+    @Test
+    public void getWithUserNotOwn() {
+        assertThrows(NotFoundException.class, () -> service.getWithUser(MEAL1_ID, ADMIN_ID));
     }
 }

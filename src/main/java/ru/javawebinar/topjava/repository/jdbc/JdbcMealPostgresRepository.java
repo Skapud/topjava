@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
-@Profile("postgres")
+import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
+
+@Profile(POSTGRES_DB)
 @Repository
 public class JdbcMealPostgresRepository extends AbstractJdbcMealRepository {
 
@@ -18,7 +20,7 @@ public class JdbcMealPostgresRepository extends AbstractJdbcMealRepository {
     }
 
     @Override
-    protected Object convertForDb(LocalDateTime dateTime) {
-        return dateTime;
+    protected <T> T convertForDb(LocalDateTime dateTime) {
+        return (T) dateTime;
     }
 }

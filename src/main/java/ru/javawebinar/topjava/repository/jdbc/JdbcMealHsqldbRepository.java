@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Profile("hsqldb")
+import static ru.javawebinar.topjava.Profiles.HSQL_DB;
+
+@Profile(HSQL_DB)
 @Repository
 public class JdbcMealHsqldbRepository extends AbstractJdbcMealRepository {
 
@@ -19,7 +21,7 @@ public class JdbcMealHsqldbRepository extends AbstractJdbcMealRepository {
     }
 
     @Override
-    protected Object convertForDb(LocalDateTime dateTime) {
-        return Timestamp.valueOf(dateTime);
+    protected <T> T convertForDb(LocalDateTime dateTime) {
+        return (T) Timestamp.valueOf(dateTime);
     }
 }

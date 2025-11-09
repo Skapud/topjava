@@ -13,10 +13,13 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+import static ru.javawebinar.topjava.Profiles.JDBC;
+import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
+
 public class SpringMain {
     public static void main(String[] args) {
         try (ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext()) {
-            appCtx.getEnvironment().setActiveProfiles("jdbc", "postgres");
+            appCtx.getEnvironment().setActiveProfiles(JDBC, POSTGRES_DB);
             appCtx.setConfigLocations("spring/spring-app.xml", "spring/spring-db.xml");
             appCtx.refresh();
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
