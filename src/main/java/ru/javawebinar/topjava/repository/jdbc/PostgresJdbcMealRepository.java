@@ -12,15 +12,15 @@ import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 
 @Profile(POSTGRES_DB)
 @Repository
-public class JdbcMealPostgresRepository extends AbstractJdbcMealRepository {
+public class PostgresJdbcMealRepository extends AbstractJdbcMealRepository {
 
     @Autowired
-    public JdbcMealPostgresRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public PostgresJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @Override
-    protected <T> T convertForDb(LocalDateTime dateTime) {
-        return (T) dateTime;
+    protected LocalDateTime convertForDb(LocalDateTime dateTime) {
+        return dateTime;
     }
 }

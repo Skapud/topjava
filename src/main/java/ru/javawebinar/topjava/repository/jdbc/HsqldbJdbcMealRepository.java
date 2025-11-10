@@ -13,15 +13,15 @@ import static ru.javawebinar.topjava.Profiles.HSQL_DB;
 
 @Profile(HSQL_DB)
 @Repository
-public class JdbcMealHsqldbRepository extends AbstractJdbcMealRepository {
+public class HsqldbJdbcMealRepository extends AbstractJdbcMealRepository {
 
     @Autowired
-    public JdbcMealHsqldbRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public HsqldbJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @Override
-    protected <T> T convertForDb(LocalDateTime dateTime) {
-        return (T) Timestamp.valueOf(dateTime);
+    protected Timestamp convertForDb(LocalDateTime dateTime) {
+        return Timestamp.valueOf(dateTime);
     }
 }

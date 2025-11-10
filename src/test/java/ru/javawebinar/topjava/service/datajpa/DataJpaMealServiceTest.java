@@ -2,14 +2,11 @@ package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractMealServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
-import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -21,15 +18,13 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @ActiveProfiles(profiles = DATAJPA)
 public class DataJpaMealServiceTest extends AbstractMealServiceTest {
 
-    @Transactional
     @Test
     public void getWithUser() {
         Meal meal = service.getWithUser(ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
 
+        Meal expectedMeal = new Meal(adminMeal1.getId(), adminMeal1.getDateTime(),
+                adminMeal1.getDescription(), adminMeal1.getCalories());
         User expectedUser = new User(UserTestData.admin);
-        expectedUser.setMeals(List.of(adminMeal2, adminMeal1));
-
-        Meal expectedMeal = adminMeal1;
         expectedMeal.setUser(expectedUser);
 
         MEAL_MATCHER_WITH_USER.assertMatch(meal, expectedMeal);
