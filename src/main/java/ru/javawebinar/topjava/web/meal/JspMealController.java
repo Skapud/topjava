@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -31,7 +29,7 @@ public class JspMealController extends AbstractMealController {
 
     @GetMapping()
     public String index(Model model) {
-        model.addAttribute("meals", MealsUtil.getTos(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay()));
+        model.addAttribute("meals", getAll());
         return "/meals";
     }
 
@@ -58,23 +56,24 @@ public class JspMealController extends AbstractMealController {
 
         String id = request.getParameter("id");
         if (StringUtils.hasLength(id)) {
-            meal.setId(Integer.parseInt(id));
-            service.update(meal, SecurityUtil.authUserId());
+            int mealId = Integer.parseInt(id);
+            meal.setId(mealId);
+            update(meal, mealId);
         } else {
-            service.create(meal, SecurityUtil.authUserId());
+            create(meal);
         }
         return "redirect:/meals";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") int mealId, Model model) {
-        model.addAttribute("meal", service.get(mealId, SecurityUtil.authUserId()));
+        model.addAttribute("meal", get(mealId));
         return "mealForm";
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int mealId) {
-        service.delete(mealId, SecurityUtil.authUserId());
+    public String remove(@PathVariable("id") int mealId) {
+        delete(mealId);
         return "redirect:/meals";
     }
 }

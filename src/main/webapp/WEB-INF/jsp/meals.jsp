@@ -3,23 +3,17 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
 
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
-<head>
-    <title>Meals</title>
-    <%--    <link rel="stylesheet" href="resources/css/style.css">--%>
-    <link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
-</head>
-<body>
+<hr>
 
 <section>
-    <hr/>
     <h2><spring:message code="meal.title"/></h2>
     <form method="get" action="<c:url value='/meals/filter'/>">
-        <%--        <input type="hidden" name="action" value="filter">--%>
         <dl>
             <dt><spring:message code="meal.fromDate"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -38,7 +32,7 @@
         </dl>
         <button type="submit"><spring:message code="meal.filter"/></button>
     </form>
-    <hr/>
+    <hr>
     <a href="<c:url value='/meals/add'/>"><spring:message code="meal.add"/></a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
