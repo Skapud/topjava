@@ -17,34 +17,28 @@ public class MealRestController extends AbstractMealController {
         super(service);
     }
 
-    @Override
     public Meal get(int id) {
         return super.get(id);
     }
 
-    @Override
     public void delete(int id) {
         super.delete(id);
     }
 
-    @Override
     public List<MealTo> getAll() {
-       return super.getAll();
+        return super.getAll();
     }
 
-    @Override
     public Meal create(Meal meal) {
         return super.create(meal);
     }
 
-    @Override
     public void update(Meal meal, int id) {
         super.update(meal, id);
     }
 
-    @Override
     public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
-                                      @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         return super.getBetween(startDate, startTime, endDate, endTime);
     }
 }

@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Assume;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -40,5 +41,9 @@ public abstract class AbstractServiceTest {
         assertThatExceptionOfType(Throwable.class)
                 .isThrownBy(runnable::run)
                 .withRootCauseInstanceOf(rootExceptionClass);
+    }
+
+    protected void excludeProfiles(String... profiles) {
+        Assume.assumeFalse(env.acceptsProfiles(profiles));
     }
 }
