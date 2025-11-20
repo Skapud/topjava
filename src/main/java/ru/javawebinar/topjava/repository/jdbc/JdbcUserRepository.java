@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -16,8 +15,6 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 
 @Repository
@@ -31,6 +28,24 @@ public class JdbcUserRepository implements UserRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final SimpleJdbcInsert insertUser;
+
+    private static final ResultSetExtractor<List<User>> RESULT_SET_EXTRACTOR = rs -> {
+        Map<Integer, User> usersMap = new LinkedHashMap<>();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String role = rs.getString("role");
+            User user;
+            if (usersMap.containsKey(id)) {
+                user = usersMap.get(id);
+            } else {
+                user = ROW_MAPPER.mapRow(rs, rs.getRow());
+                user.setRoles(EnumSet.noneOf(Role.class));
+                usersMap.put(id, user);
+            }
+            if (role != null) user.getRoles().add(Role.valueOf(role));
+        }
+        return new ArrayList<>(usersMap.values());
+    };
 
     @Autowired
     public JdbcUserRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -66,6 +81,20 @@ public class JdbcUserRepository implements UserRepository {
         return user;
     }
 
+    private void insertUserRoles(User user) {
+        List<Role> roles = new ArrayList<>(user.getRoles());
+        int batchSize = roles.size();
+        jdbcTemplate.batchUpdate("""
+                        INSERT INTO user_role (user_id, role) VALUES (?,?)
+                        """,
+                roles,
+                batchSize,
+                (ps, role) -> {
+                    ps.setInt(1, user.id());
+                    ps.setString(2, role.name());
+                });
+    }
+
     @Override
     @Transactional
     public boolean delete(int id) {
@@ -77,7 +106,7 @@ public class JdbcUserRepository implements UserRepository {
         List<User> users = jdbcTemplate.query("""
                 SELECT * FROM users u
                 LEFT JOIN user_role r ON u.id = r.user_id WHERE u.id=?
-                """, getResultSetExtractor(), id);
+                """, RESULT_SET_EXTRACTOR, id);
         return DataAccessUtils.singleResult(users);
     }
 
@@ -86,7 +115,7 @@ public class JdbcUserRepository implements UserRepository {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("""
                 SELECT * FROM users u
-                LEFT JOIN user_role r ON u.id = r.user_id WHERE email=?""", getResultSetExtractor(), email);
+                LEFT JOIN user_role r ON u.id = r.user_id WHERE email=?""", RESULT_SET_EXTRACTOR, email);
         return DataAccessUtils.singleResult(users);
     }
 
@@ -95,44 +124,6 @@ public class JdbcUserRepository implements UserRepository {
         return jdbcTemplate.query("""
                 SELECT * FROM users u
                 LEFT JOIN user_role r ON u.id = r.user_id
-                ORDER BY name, email""", getResultSetExtractor());
-    }
-
-    private static ResultSetExtractor<List<User>> getResultSetExtractor() {
-        return rs -> {
-            Map<Integer, User> usersMap = new LinkedHashMap<>();
-            int i = 0;
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String role = rs.getString("role");
-                User user;
-                if (usersMap.containsKey(id)) {
-                    user = usersMap.get(id);
-                } else {
-                    user = ROW_MAPPER.mapRow(rs, i++);
-                    user.setRoles(new HashSet<>());
-                    usersMap.put(id, user);
-                }
-                if (role != null) user.getRoles().add(Role.valueOf(role));
-            }
-            return new ArrayList<>(usersMap.values());
-        };
-    }
-
-    private void insertUserRoles(User user) {
-        List<Role> roles = new ArrayList<>(user.getRoles());
-        jdbcTemplate.batchUpdate("""
-                INSERT INTO user_role (user_id, role) VALUES (?,?)
-                """, new BatchPreparedStatementSetter() {
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setInt(1, user.id());
-                ps.setString(2, String.valueOf(roles.get(i)));
-            }
-
-            @Override
-            public int getBatchSize() {
-                return roles.size();
-            }
-        });
+                ORDER BY name, email""", RESULT_SET_EXTRACTOR);
     }
 }
