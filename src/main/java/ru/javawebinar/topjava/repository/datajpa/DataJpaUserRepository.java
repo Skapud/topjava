@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,13 +45,12 @@ public class DataJpaUserRepository implements UserRepository {
     }
 
     @Transactional
+    @Override
     public User getWithMeals(int id) {
-        List<User> users = crudRepository.getWithRoles(id);
-        if (!users.isEmpty()) {
-            User user = users.getFirst();
-            crudRepository.getWithMeals(users);
-            return user;
+        User user = crudRepository.findById(id).orElse(null);
+        if (user != null) {
+            Hibernate.initialize(user.getMeals());
         }
-        return null;
+        return user;
     }
 }
