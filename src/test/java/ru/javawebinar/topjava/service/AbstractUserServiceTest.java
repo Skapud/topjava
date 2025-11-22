@@ -24,14 +24,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Autowired(required = false)
-    protected JpaUtil jpaUtil;
-
-    @Before
-    public void setup() {
-        if (jpaUtil != null) jpaUtil.clear2ndLevelHibernateCache();
-    }
-
     @Test
     public void create() {
         User created = service.create(getNew());
