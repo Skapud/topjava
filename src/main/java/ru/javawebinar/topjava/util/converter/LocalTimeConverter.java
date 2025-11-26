@@ -7,18 +7,10 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalTimeConverter implements Converter<String, LocalTime> {
 
-    private String timePattern = "HH:mm";
-
-    public String getTimePattern() {
-        return timePattern;
-    }
-
-    public void setTimePattern(String timePattern) {
-        this.timePattern = timePattern;
-    }
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
     public LocalTime convert(String timeString) {
-        return LocalTime.parse(timeString, DateTimeFormatter.ofPattern(timePattern));
+        return LocalTime.parse(timeString, TIME_FORMATTER);
     }
 }

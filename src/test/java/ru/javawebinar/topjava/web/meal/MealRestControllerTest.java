@@ -12,6 +12,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -36,10 +39,22 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter"))
+        LocalTime startTime = meal5.getTime().plusHours(1);
+        LocalTime endTime = meal7.getTime();
+        LocalDate date = meal5.getDate();
+        perform(MockMvcRequestBuilders.get(REST_URL +
+                "filter?startDate=" + date +
+                "&startTime=" + startTime +
+                "&endDate=" + date +
+                "&endTime=" + endTime
+        ))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(meals, user.getCaloriesPerDay())));
+                .andExpect(MEAL_TO_MATCHER.contentJson(
+                        MealsUtil.getFilteredTos(dailyMeals,
+                                user.getCaloriesPerDay(),
+                                startTime,
+                                endTime)));
     }
 
     @Test
