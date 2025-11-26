@@ -1,0 +1,516 @@
+{
+	"info": {
+		"_postman_id": "62dbf289-f2a6-48f1-9b13-93b32fa9e08a",
+		"name": "Topjava REST API",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48652869",
+		"_collection_link": "https://skapud-9137418.postman.co/workspace/IGOR's-Team's-Workspace~fc8a35ac-25bc-40eb-86a9-7070afe79737/collection/48652869-62dbf289-f2a6-48f1-9b13-93b32fa9e08a?action=share&source=collection_link&creator=48652869"
+	},
+	"item": [
+		{
+			"name": "MealRestController.getAll",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/rest/meals",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"rest",
+						"meals"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": [
+				{
+					"name": "MealRestController.getAll",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/rest/meals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest",
+								"meals"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 26 Nov 2025 12:41:11 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=20"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 100009,\n        \"description\": \"Ужин\",\n        \"calories\": 510,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T20:00:00\"\n    },\n    {\n        \"id\": 100008,\n        \"description\": \"Обед\",\n        \"calories\": 1000,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T13:00:00\"\n    },\n    {\n        \"id\": 100007,\n        \"description\": \"Завтрак\",\n        \"calories\": 500,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T10:00:00\"\n    },\n    {\n        \"id\": 100006,\n        \"description\": \"Еда на граничное значение\",\n        \"calories\": 100,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T00:00:00\"\n    },\n    {\n        \"id\": 100005,\n        \"description\": \"Ужин\",\n        \"calories\": 500,\n        \"excess\": false,\n        \"dateTime\": \"2020-01-30T20:00:00\"\n    },\n    {\n        \"id\": 100004,\n        \"description\": \"Обед\",\n        \"calories\": 1000,\n        \"excess\": false,\n        \"dateTime\": \"2020-01-30T13:00:00\"\n    },\n    {\n        \"id\": 100003,\n        \"description\": \"Завтрак\",\n        \"calories\": 500,\n        \"excess\": false,\n        \"dateTime\": \"2020-01-30T10:00:00\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "MealRestController.getBetween",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/rest/meals/filter",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest",
+								"meals",
+								"filter"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 26 Nov 2025 12:41:16 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=20"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 100009,\n        \"description\": \"Ужин\",\n        \"calories\": 510,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T20:00:00\"\n    },\n    {\n        \"id\": 100008,\n        \"description\": \"Обед\",\n        \"calories\": 1000,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T13:00:00\"\n    },\n    {\n        \"id\": 100007,\n        \"description\": \"Завтрак\",\n        \"calories\": 500,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T10:00:00\"\n    },\n    {\n        \"id\": 100006,\n        \"description\": \"Еда на граничное значение\",\n        \"calories\": 100,\n        \"excess\": true,\n        \"dateTime\": \"2020-01-31T00:00:00\"\n    },\n    {\n        \"id\": 100005,\n        \"description\": \"Ужин\",\n        \"calories\": 500,\n        \"excess\": false,\n        \"dateTime\": \"2020-01-30T20:00:00\"\n    },\n    {\n        \"id\": 100004,\n        \"description\": \"Обед\",\n        \"calories\": 1000,\n        \"excess\": false,\n        \"dateTime\": \"2020-01-30T13:00:00\"\n    },\n    {\n        \"id\": 100003,\n        \"description\": \"Завтрак\",\n        \"calories\": 500,\n        \"excess\": false,\n        \"dateTime\": \"2020-01-30T10:00:00\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "MealRestController.get",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/rest/meals/100004",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest",
+								"meals",
+								"100004"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 26 Nov 2025 12:41:20 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=20"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 100004,\n    \"dateTime\": \"2020-01-30T13:00:00\",\n    \"description\": \"Обед\",\n    \"calories\": 1000\n}"
+				}
+			]
+		},
+		{
+			"name": "MealRestController.delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful DELETE request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/info?id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"info"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+			},
+			"response": [
+				{
+					"name": "Delete data",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest/meals/100007",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest",
+								"meals",
+								"100007"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 26 Nov 2025 12:41:25 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=20"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "MealRestController.createWithLocation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"info"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": [
+				{
+					"name": "Post data",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"null\",\n    \"dateTime\": \"2025-11-26T16:30:00\",\n    \"description\": \"Postman POST test\",\n    \"calories\": 444\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest/meals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest",
+								"meals"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Location",
+							"value": "http://localhost:8080/topjava/rest/meals/100012"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 26 Nov 2025 12:41:30 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=20"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 100012,\n    \"dateTime\": \"2025-11-26T16:30:00\",\n    \"description\": \"Postman POST test\",\n    \"calories\": 444\n}"
+				}
+			]
+		},
+		{
+			"name": "MealRestController.update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful PUT request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/info?id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"info"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+			},
+			"response": [
+				{
+					"name": "Update data",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 100006,\n    \"dateTime\": \"2025-11-26T16:15:00\",\n    \"description\": \"Postman PUT test\",\n    \"calories\": 777\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest/meals/100006",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest",
+								"meals",
+								"100006"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Wed, 26 Nov 2025 12:41:35 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=20"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://template.postman-echo.com"
+		}
+	]
+}
