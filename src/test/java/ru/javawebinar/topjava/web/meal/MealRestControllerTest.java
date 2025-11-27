@@ -12,7 +12,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,13 +40,12 @@ public class MealRestControllerTest extends AbstractControllerTest {
     public void getBetween() throws Exception {
         LocalTime startTime = meal5.getTime().plusHours(1);
         LocalTime endTime = meal7.getTime();
-        LocalDate date = meal5.getDate();
-        perform(MockMvcRequestBuilders.get(REST_URL +
-                "filter?startDate=" + date +
-                "&startTime=" + startTime +
-                "&endDate=" + date +
-                "&endTime=" + endTime
-        ))
+        String date = meal5.getDate().toString();
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                        .param("startDate", date)
+                        .param("startTime", startTime.toString())
+                        .param("endDate", date)
+                        .param("endTime", endTime.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MEAL_TO_MATCHER.contentJson(
