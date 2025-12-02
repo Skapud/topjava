@@ -46,12 +46,15 @@ $(function () {
     );
 });
 
-function changeStatus(userId, checkbox) {
+function changeStatus(userId, newStatus) {
+    const oldStatus = !newStatus;
     $.ajax({
         type: "PATCH",
-        url: ctx.ajaxUrl + userId + "?status=" + checkbox,
+        url: ctx.ajaxUrl + userId + "?status=" + newStatus,
     }).done(function () {
-        updateTable();
         successNoty("User status updated");
+    }).fail(function () {
+        var $box = $('#checkbox_' + userId);
+        $box.prop('checked', oldStatus);
     });
 }

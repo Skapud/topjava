@@ -5,6 +5,8 @@ const ctx = {
     ajaxUrl: mealAjaxUrl
 };
 
+const $MEAL_FILTER_FORM= $('#mealFilterForm');
+
 $(function () {
     makeEditable(
         $('#mealsTable').DataTable({
@@ -35,18 +37,17 @@ $(function () {
 });
 
 $(function () {
-    $('form').submit(function (e) {
-        var $form = $(this);
-        filter($form);
+    $MEAL_FILTER_FORM.submit(function (e) {
         e.preventDefault();
+        filter($(this).serialize());
     });
 });
 
-function filter($form) {
+function filter(data) {
     $.ajax({
-        url: $form.attr('action'),
-        type: $form.attr('method'),
-        data: $form.serialize(),
+        url: ctx.ajaxUrl + 'filter',
+        type: "GET",
+        data: data,
     }).done(function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
         successNoty("Success");
@@ -54,9 +55,8 @@ function filter($form) {
 }
 
 function clearForm() {
-    var $form = $('#mealFilterForm');
-    $form[0].reset();
-    filter($form);
+    $MEAL_FILTER_FORM[0].reset();
+    filter($MEAL_FILTER_FORM.serialize());
 }
 
 

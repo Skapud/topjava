@@ -55,9 +55,9 @@ public class UserService {
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
     public void enableOrDisable(int id, boolean status) {
-        User user = checkNotFound(repository.get(id), id);
+        User user = get(id);
         user.setEnabled(status);
-        checkNotFound(repository.save(user), user.id());
+        repository.save(user);
     }
 
     public User getWithMeals(int id) {
