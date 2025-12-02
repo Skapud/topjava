@@ -45,3 +45,13 @@ $(function () {
         })
     );
 });
+
+function changeStatus(userId, checkbox) {
+    $.ajax({
+        type: "PATCH",
+        url: ctx.ajaxUrl + userId + "?status=" + checkbox,
+    }).done(function () {
+        updateTable();
+        successNoty("User status updated");
+    });
+}

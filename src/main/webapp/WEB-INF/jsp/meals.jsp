@@ -12,7 +12,7 @@
 <section>
     <h3><spring:message code="meal.title"/></h3>
 
-    <form method="get" action="meals/filter">
+    <form method="get" action="<c:url value='/user/meals/filter'/>" id="mealFilterForm">
         <dl>
             <dt><spring:message code="meal.startDate"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -30,6 +30,7 @@
             <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
         <button type="submit"><spring:message code="meal.filter"/></button>
+        <button class="clear-button" type="button" onclick="clearForm()">Reset</button>
     </form>
 
     <hr>
@@ -37,7 +38,6 @@
         <span class="fa fa-plus"></span>
         <spring:message code="common.add"/>
     </button>
-    <a href="meals/create"><spring:message code="meal.add"/></a>
     <hr>
 
     <table class="table table-hover table-primary" id="mealsTable">
