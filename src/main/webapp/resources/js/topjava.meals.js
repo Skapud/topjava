@@ -1,11 +1,15 @@
 const mealAjaxUrl = "user/meals/";
 
+const mealAjaxFilterUrl = "user/meals/filter";
+
+const $MEAL_FILTER_FORM = $('#mealFilterForm');
+
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
-    ajaxUrl: mealAjaxUrl
+    ajaxUrl : mealAjaxUrl,
+    ajaxFilterUrl : mealAjaxFilterUrl,
+    filterForm : $MEAL_FILTER_FORM
 };
-
-const $MEAL_FILTER_FORM= $('#mealFilterForm');
 
 $(function () {
     makeEditable(
@@ -39,15 +43,15 @@ $(function () {
 $(function () {
     $MEAL_FILTER_FORM.submit(function (e) {
         e.preventDefault();
-        filter($(this).serialize());
+        filter();
     });
 });
 
-function filter(data) {
+function filter() {
     $.ajax({
         url: ctx.ajaxUrl + 'filter',
         type: "GET",
-        data: data,
+        data: ctx.filterForm.serialize()
     }).done(function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
         successNoty("Success");

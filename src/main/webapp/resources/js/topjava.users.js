@@ -2,10 +2,11 @@ const userAjaxUrl = "admin/users/";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
-    ajaxUrl: userAjaxUrl
+    ajaxUrl : userAjaxUrl,
+    ajaxFilterUrl: userAjaxUrl,
+    filterForm : $(),
 };
 
-// $(document).ready(function () {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
@@ -46,15 +47,15 @@ $(function () {
     );
 });
 
-function changeStatus(userId, newStatus) {
-    const oldStatus = !newStatus;
+function changeStatus(userId, checkbox) {
+    var newStatus = checkbox.checked;
     $.ajax({
         type: "PATCH",
         url: ctx.ajaxUrl + userId + "?status=" + newStatus,
     }).done(function () {
+        $(checkbox).closest('tr').attr('data-user-enabled', newStatus);
         successNoty("User status updated");
     }).fail(function () {
-        var $box = $('#checkbox_' + userId);
-        $box.prop('checked', oldStatus);
+        $(checkbox).prop('checked', !newStatus);
     });
 }
