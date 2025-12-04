@@ -33,7 +33,7 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-    $.get(ctx.ajaxFilterUrl, ctx.filterForm.serialize(), function (data) {
+    $.get(ctx.ajaxDataUrl(), function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
     });
 }
