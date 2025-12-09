@@ -36,10 +36,9 @@ public class DateTimeFormatters {
     }
 
     public static class LocalDateTimeFormatter implements Formatter<LocalDateTime> {
-
         @Override
         public LocalDateTime parse(String text, Locale locale) {
-            return LocalDateTime.parse(text);
+            return LocalDateTime.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
 
         @Override

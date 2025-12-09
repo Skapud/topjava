@@ -64,4 +64,13 @@ $(function () {
             }
         })
     );
+    $('#startDate, #endDate').datetimepicker({
+        format: 'Y-m-d'
+    });
+    $('#startTime, #endTime').datetimepicker({
+        format: 'H:i'
+    });
+    $('#datetimepicker').datetimepicker({
+        format: 'Y-m-d H:i'
+    });
 });
