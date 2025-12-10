@@ -64,10 +64,26 @@ $(function () {
             }
         })
     );
-    $('#startDate, #endDate').datetimepicker({
-        format: 'Y-m-d'
+    $('#startDate').datetimepicker({
+        format: 'Y-m-d',
+        onSelectDate: function (current_date) {
+            $('#endDate').datetimepicker('setOptions', {
+                minDate: current_date
+            });
+        }
     });
-    $('#startTime, #endTime').datetimepicker({
+    $('#endDate').datetimepicker({
+        format: 'Y-m-d',
+    });
+    $('#startTime').datetimepicker({
+        format: 'H:i',
+        onSelectTime: function (current_time) {
+            $('#endTime').datetimepicker('setOptions', {
+                minTime: current_time
+            });
+        }
+    });
+    $('#endTime').datetimepicker({
         format: 'H:i'
     });
     $('#datetimepicker').datetimepicker({

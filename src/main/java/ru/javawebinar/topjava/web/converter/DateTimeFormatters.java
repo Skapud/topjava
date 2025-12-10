@@ -36,14 +36,16 @@ public class DateTimeFormatters {
     }
 
     public static class LocalDateTimeFormatter implements Formatter<LocalDateTime> {
+        private static final DateTimeFormatter FORMATTER_WITHOUT_T = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         @Override
         public LocalDateTime parse(String text, Locale locale) {
-            return LocalDateTime.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            return LocalDateTime.parse(text, FORMATTER_WITHOUT_T);
         }
 
         @Override
         public String print(LocalDateTime lt, Locale locale) {
-            return lt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            return lt.format(FORMATTER_WITHOUT_T);
         }
     }
 }
