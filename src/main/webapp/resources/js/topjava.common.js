@@ -23,7 +23,7 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            if (key === 'dateTime') value = value.replace('T', ' ');
+            if (key === 'dateTime') value = value.replace('T', ' ').slice(0, 16);
             form.find(`input[name='${key}']`).val(value);
         });
         $('#editRow').modal();

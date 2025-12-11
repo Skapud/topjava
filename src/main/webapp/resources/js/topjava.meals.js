@@ -31,7 +31,7 @@ $(function () {
                     "data": "dateTime",
                     "render": function (dateTime, type, row) {
                         if (type === "display") {
-                            return dateTime.replace('T', ' ');
+                            return dateTime.replace('T', ' ').slice(0, 16);
                         }
                         return dateTime;
                     }
@@ -65,6 +65,7 @@ $(function () {
         })
     );
     $('#startDate').datetimepicker({
+        timepicker: false,
         format: 'Y-m-d',
         onSelectDate: function (current_date) {
             $('#endDate').datetimepicker('setOptions', {
@@ -73,9 +74,11 @@ $(function () {
         }
     });
     $('#endDate').datetimepicker({
-        format: 'Y-m-d',
+        timepicker: false,
+        format: 'Y-m-d'
     });
     $('#startTime').datetimepicker({
+        datepicker: false,
         format: 'H:i',
         onSelectTime: function (current_time) {
             $('#endTime').datetimepicker('setOptions', {
@@ -84,6 +87,7 @@ $(function () {
         }
     });
     $('#endTime').datetimepicker({
+        datepicker: false,
         format: 'H:i'
     });
     $('#datetimepicker').datetimepicker({
