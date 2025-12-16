@@ -81,6 +81,26 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateNotValid() throws Exception {
+        Meal updated = getUpdatedNotValid();
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().is4xxClientError());
+    }
+
+//    @Test
+//    void updateNotValidDateTime() throws Exception {
+//        Meal updated = getNotValidDateTime();
+//        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+//                .with(userHttpBasic(user))
+//                .content(JsonUtil.writeValue(updated)))
+//                .andExpect(status().is4xxClientError());
+//        TestTransaction.flagForCommit();
+//        TestTransaction.end();
+//    }
+
+    @Test
     void createWithLocation() throws Exception {
         Meal newMeal = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -94,6 +114,16 @@ class MealRestControllerTest extends AbstractControllerTest {
         newMeal.setId(newId);
         MEAL_MATCHER.assertMatch(created, newMeal);
         MEAL_MATCHER.assertMatch(mealService.get(newId, USER_ID), newMeal);
+    }
+
+    @Test
+    void createWithLocationNotValid() throws Exception {
+        Meal newMeal = getNewNotValid();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(newMeal)))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
