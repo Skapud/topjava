@@ -33,7 +33,7 @@ public class ExceptionInfoHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "user.duplicateEmail";
     public static final String EXCEPTION_DUPLICATE_DATETIME = "meal.duplicateDateTime";
 
-    private static MessageSourceAccessor messageSourceAccessor = null;
+    private static MessageSourceAccessor messageSourceAccessor;
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
@@ -47,65 +47,55 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
     public ErrorInfo notFoundError(HttpServletRequest req, NotFoundException e) {
-        return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
+        String message = ValidationUtil.getRootCause(e).toString();
+        return logAndGetErrorInfo(req, e,false, DATA_NOT_FOUND, message);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        return logAndGetErrorInfo(req, e, false, DATA_ERROR);
+        String message = ValidationUtil.getRootCause(e).getMessage().toString();
+        String lowerCaseMessage = message.toLowerCase();
+            for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
+                if (lowerCaseMessage.contains(entry.getKey())) {
+                    message = messageSourceAccessor.getMessage(entry.getValue());
+                }
+            }
+        return logAndGetErrorInfo(req, e,false, DATA_ERROR, message);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+        String message = ValidationUtil.getRootCause(e).toString();
+        return logAndGetErrorInfo(req, e,false, VALIDATION_ERROR, message);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(BindException.class)
     public ErrorInfo validationUIError(HttpServletRequest req, BindException e) {
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+        String[] messages = e.getFieldErrors().stream()
+                .map(error -> "[" + error.getField() + "] " + error.getDefaultMessage())
+                .toArray(String[]::new);
+        return logAndGetErrorInfo(req, e,false, VALIDATION_ERROR, messages);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorInfo internalError(HttpServletRequest req, Exception e) {
-        return logAndGetErrorInfo(req, e, true, APP_ERROR);
+        String message = ValidationUtil.getRootCause(e).toString();
+        return logAndGetErrorInfo(req, e,true, APP_ERROR, message);
     }
 
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
-        logException(req, e, logException, errorType);
+    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String... message) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
-        String[] messages = switch(e) {
-            case BindException bindException ->
-                    bindException.getFieldErrors().stream()
-                        .map(error -> "[" + error.getField() + "] " + error.getDefaultMessage())
-                        .toArray(String[]::new);
-            case DataIntegrityViolationException DBException -> {
-                String rootMsg = rootCause.getMessage();
-                if (rootMsg != null) {
-                    String lowerCaseMsg = rootMsg.toLowerCase();
-                    for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
-                        if (lowerCaseMsg.contains(entry.getKey())) {
-                            yield new String[] {messageSourceAccessor.getMessage(entry.getValue())};
-                        }
-                    }
-                }
-                yield new String[] {rootCause.toString()};
-            }
-            default -> new String[] {rootCause.toString()};
-        };
-        return new ErrorInfo(req.getRequestURL(), errorType, messages);
-    }
-
-    private static void logException(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
-        Throwable rootCause = ValidationUtil.getRootCause(e);
+        CharSequence url = req.getRequestURL();
         if (logException) {
-            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
+            log.error(errorType + " at request " + url, rootCause);
         } else {
-            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
+            log.warn("{} at request  {}: {}", errorType, url, message);
         }
+        return new ErrorInfo(url, errorType, message);
     }
 }

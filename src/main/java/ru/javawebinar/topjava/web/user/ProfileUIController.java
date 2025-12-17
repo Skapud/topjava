@@ -26,11 +26,15 @@ public class ProfileUIController extends AbstractUserController {
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
         if (result.hasErrors()) {
             return "profile";
-        } else {
+        }
+        try {
             super.update(userTo, SecurityUtil.authUserId());
             SecurityUtil.get().setTo(userTo);
             status.setComplete();
             return "redirect:/meals";
+        } catch (DataIntegrityViolationException exception) {
+            result.rejectValue("email", "user.duplicateEmail");
+            return "profile";
         }
     }
 
