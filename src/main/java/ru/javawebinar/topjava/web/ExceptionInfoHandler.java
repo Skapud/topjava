@@ -21,9 +21,7 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
@@ -35,15 +33,15 @@ public class ExceptionInfoHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "user.duplicateEmail";
     public static final String EXCEPTION_DUPLICATE_DATETIME = "meal.duplicateDateTime";
 
-    private final MessageSourceAccessor messageSourceAccessor;
-
-    public ExceptionInfoHandler(MessageSourceAccessor messageSourceAccessor) {
-        this.messageSourceAccessor = messageSourceAccessor;
-    }
+    private static MessageSourceAccessor messageSourceAccessor = null;
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
             "meal_unique_user_datetime_idx", EXCEPTION_DUPLICATE_DATETIME);
+
+    public ExceptionInfoHandler(MessageSourceAccessor messageSourceAccessor) {
+        this.messageSourceAccessor = messageSourceAccessor;
+    }
 
     //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -55,15 +53,6 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        String rootMsg = ValidationUtil.getRootCause(e).getMessage();
-        if (rootMsg != null) {
-            String lowerCaseMsg = rootMsg.toLowerCase();
-            for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
-                if (lowerCaseMsg.contains(entry.getKey())) {
-                    return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, messageSourceAccessor.getMessage(entry.getValue()));
-                }
-            }
-        }
         return logAndGetErrorInfo(req, e, false, DATA_ERROR);
     }
 
@@ -89,20 +78,26 @@ public class ExceptionInfoHandler {
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         logException(req, e, logException, errorType);
         Throwable rootCause = ValidationUtil.getRootCause(e);
-        return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
-    }
-
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, BindException e, boolean logException, ErrorType errorType) {
-        logException(req, e, logException, errorType);
-        String rootCause =  e.getFieldErrors().stream()
-                .map(error -> "[" + error.getField() + "] " + error.getDefaultMessage())
-                .collect(Collectors.joining("<br>"));
-        return new ErrorInfo(req.getRequestURL(), errorType, rootCause);
-    }
-
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String... rootCause) {
-        logException(req, e, logException, errorType);
-        return new ErrorInfo(req.getRequestURL(), errorType, Arrays.toString(rootCause));
+        String[] messages = switch(e) {
+            case BindException bindException ->
+                    bindException.getFieldErrors().stream()
+                        .map(error -> "[" + error.getField() + "] " + error.getDefaultMessage())
+                        .toArray(String[]::new);
+            case DataIntegrityViolationException DBException -> {
+                String rootMsg = rootCause.getMessage();
+                if (rootMsg != null) {
+                    String lowerCaseMsg = rootMsg.toLowerCase();
+                    for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
+                        if (lowerCaseMsg.contains(entry.getKey())) {
+                            yield new String[] {messageSourceAccessor.getMessage(entry.getValue())};
+                        }
+                    }
+                }
+                yield new String[] {rootCause.toString()};
+            }
+            default -> new String[] {rootCause.toString()};
+        };
+        return new ErrorInfo(req.getRequestURL(), errorType, messages);
     }
 
     private static void logException(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {

@@ -13,8 +13,6 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.validation.Valid;
 
-import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
-
 @Controller
 @RequestMapping("/profile")
 public class ProfileUIController extends AbstractUserController {

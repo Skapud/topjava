@@ -27,4 +27,12 @@
             </form:form>
         </sec:authorize>
     </div>
+    <li class="nav-item dropdown" style="list-style: none;">
+        <a class="dropdown-toggle nav-link" data-toggle="dropdown"><spring:message code="app.currentLang"/></a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="${requestScope['javax.servlet.forward.request_uri']}?lang=en">English</a>
+            <a class="dropdown-item" href="${requestScope['javax.servlet.forward.request_uri']}?lang=ru">Русский</a>
+        </div>
+    </li>
 </nav>
+

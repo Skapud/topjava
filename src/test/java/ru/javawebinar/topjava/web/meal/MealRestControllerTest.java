@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -86,19 +88,18 @@ class MealRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isUnprocessableEntity());
     }
 
-//    @Test
-//    void updateNotValidDateTime() throws Exception {
-//        Meal updated = getNotValidDateTime();
-//        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
-//                .with(userHttpBasic(user))
-//                .content(JsonUtil.writeValue(updated)))
-//                .andExpect(status().is4xxClientError());
-//        TestTransaction.flagForCommit();
-//        TestTransaction.end();
-//    }
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateNotValidDateTime() throws Exception {
+        Meal updated = getUpdatedNotValidDateTime();
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isConflict());
+    }
 
     @Test
     void createWithLocation() throws Exception {
@@ -123,7 +124,18 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(newMeal)))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createWithLocationNotValidDateTime() throws Exception {
+        Meal newMeal = getNewNotValidDateTime();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(newMeal)))
+                .andExpect(status().isConflict());
     }
 
     @Test
