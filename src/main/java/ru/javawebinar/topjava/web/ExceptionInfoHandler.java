@@ -47,14 +47,14 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
     public ErrorInfo notFoundError(HttpServletRequest req, NotFoundException e) {
-        String message = ValidationUtil.getRootCause(e).toString();
+        String message = ValidationUtil.getRootCause(e).getMessage();
         return logAndGetErrorInfo(req, e,false, DATA_NOT_FOUND, message);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        String message = ValidationUtil.getRootCause(e).getMessage().toString();
+        String message = ValidationUtil.getRootCause(e).getMessage();
         String lowerCaseMessage = message.toLowerCase();
             for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
                 if (lowerCaseMessage.contains(entry.getKey())) {
@@ -67,7 +67,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
-        String message = ValidationUtil.getRootCause(e).toString();
+        String message = ValidationUtil.getRootCause(e).getMessage();
         return logAndGetErrorInfo(req, e,false, VALIDATION_ERROR, message);
     }
 
@@ -83,7 +83,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorInfo internalError(HttpServletRequest req, Exception e) {
-        String message = ValidationUtil.getRootCause(e).toString();
+        String message = ValidationUtil.getRootCause(e).getMessage();
         return logAndGetErrorInfo(req, e,true, APP_ERROR, message);
     }
 
